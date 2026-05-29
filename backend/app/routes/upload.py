@@ -4,6 +4,7 @@ import os
 
 from app.services.pdf_service import extract_text_from_pdf
 from app.services.chunk_service import chunk_text
+from app.services.embedding_service import generate_embeddings
 
 router = APIRouter()
 
@@ -21,10 +22,12 @@ async def upload_pdf(file: UploadFile = File(...)):
 
     chunks = chunk_text(extracted_text)
 
+    embeddings = generate_embeddings(chunks)
+
     return {
         "message": "PDF uploaded successfully",
         "filename": file.filename,
-        "text_length": len(extracted_text),
         "total_chunks": len(chunks),
-        "sample_chunk": chunks[0]
+        "embedding_dimension": len(embeddings[0]),
+        "total_embeddings": len(embeddings)
     }
